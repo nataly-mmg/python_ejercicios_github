@@ -39,7 +39,7 @@
 
 
      <!-- INGRESO DE DATOS -->
-        <form class="p-4 bg-body-tertiary mx-auto login-box"
+        <form id="loginForm" class="p-4 bg-body-tertiary mx-auto login-box"
             style="max-width: 600px; width: 100%; border-radius: 24px;">
 
             <div class="row align-items-center mb-3">
@@ -52,12 +52,12 @@
             <div class="row align-items-center mb-3">
                 <label for="inputPassword" class="col-12 col-sm-3 col-form-label">Contraseña:</label>
                 <div class="col-12 col-sm-9">
-                    <input type="password" class="form-control" id="inputPassword" placeholder="Ingresa tu contraseña">
+                    <input type="password" class="form-control" id="password" placeholder="Ingresa tu contraseña">
                 </div>
             </div>
             <div id="liveAlertPlaceholder"></div>
             <div class="actions p-2">
-                <button type="button" class="btn btn-primary" id="liveAlertBtn">Registro</button>
+                <button type="submit" class="btn btn-primary">Registro</button>
 
             </div>
         </form>
