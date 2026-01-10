@@ -1,47 +1,51 @@
 
 
-        //  Abrir modal para contacto
-        const btnNuevoContacto = document.getElementById("btnNuevoContacto");
-        const modalEl = document.getElementById("modalContacto");
-        const modal = new bootstrap.Modal(modalEl);
+$(function () {
+
+// Saldo en Local Storage
+
+let saldo = parseInt(localStorage.getItem("saldo")) || 60000;
+  localStorage.setItem("saldo", saldo);
+
+  const formatoDinero = (valor) => "$" + Number(valor).toLocaleString("es-CL");
+  $("#saldoNav").text(formatoDinero(saldo));
 
 
-        btnNuevoContacto.addEventListener("click", () => {
-            modal.show();
-        });
+//  Abrir modal para contacto + bootstrap lo oculta
+  const modalContacto = new bootstrap.Modal(document.getElementById("modalContacto"));
+  const modalMonto = new bootstrap.Modal(document.getElementById("modalMonto"));
 
-        //  Abrir modal para saldo
-        const modalMonto = new bootstrap.Modal(document.getElementById("modalMonto"));
+  $("#btnNuevoContacto").on("click", function () {
+    $("#alert-container").html("");
+    $("#confirmacionEnvio").text("");
+    modalContacto.show();
 
-        let saldo = 60000;
-        const saldoNav = document.getElementById("saldoNav");
+  });
 
-        function formatoDinero(valor) {
-            return "$" + Number(valor).toLocaleString("es-CL");
-        }
-
-        if (saldoNav) saldoNav.textContent = formatoDinero(saldo);
+  });
 
 
 
-        //  Guardar contacto (agregar a la lista)
-        const btnGuardarContacto = document.getElementById("btnGuardarContacto");
-        const lista = document.getElementById("ListaContactos");
 
-        btnGuardarContacto.addEventListener("click", () => {
-            const nombre = document.getElementById("contactoNombre").value.trim();
-            const cbu = document.getElementById("contactoCBU").value.trim();
-            const alias = document.getElementById("contactoAlias").value.trim();
-            const banco = document.getElementById("contactoBanco").value.trim();
 
-            if (!nombre || !cbu || !alias || !banco) {
-                alert("Debes completar todos los datos del contacto");
-                return;
-            }
+//  Guardar contacto (agregar a la lista)
+const btnGuardarContacto = document.getElementById("btnGuardarContacto");
+const lista = document.getElementById("ListaContactos");
 
-            const li = document.createElement("li");
-            li.className = "list-group-item";
-            li.innerHTML = `
+btnGuardarContacto.addEventListener("click", () => {
+    const nombre = document.getElementById("contactoNombre").value.trim();
+    const cbu = document.getElementById("contactoCBU").value.trim();
+    const alias = document.getElementById("contactoAlias").value.trim();
+    const banco = document.getElementById("contactoBanco").value.trim();
+
+    if (!nombre || !cbu || !alias || !banco) {
+        alert("Debes completar todos los datos del contacto");
+        return;
+    }
+
+    const li = document.createElement("li");
+    li.className = "list-group-item";
+    li.innerHTML = `
 
       <div class="contact-info">
         <span class="contact-name">${nombre}</span>
@@ -49,84 +53,84 @@
       </div>
     `;
 
-            lista.appendChild(li);
+    lista.appendChild(li);
 
-            // limpiar campos
-            document.getElementById("contactoNombre").value = "";
-            document.getElementById("contactoCBU").value = "";
-            document.getElementById("contactoAlias").value = "";
-            document.getElementById("contactoBanco").value = "";
+    // limpiar campos
+    document.getElementById("contactoNombre").value = "";
+    document.getElementById("contactoCBU").value = "";
+    document.getElementById("contactoAlias").value = "";
+    document.getElementById("contactoBanco").value = "";
 
-            modal.hide();
-        });
+    modal.hide();
+});
 
-        //  Seleccionar contacto (click en li)
-        let contactoSeleccionado = null;
+//  Seleccionar contacto (click en li)
+let contactoSeleccionado = null;
 
-        lista.addEventListener("click", (e) => {
-            const li = e.target.closest("li");
-            if (!li) return;
+lista.addEventListener("click", (e) => {
+    const li = e.target.closest("li");
+    if (!li) return;
 
-            // desmarcar anterior
-            if (contactoSeleccionado) {
-                contactoSeleccionado.classList.remove("border", "border-primary");
-            }
+    // desmarcar anterior
+    if (contactoSeleccionado) {
+        contactoSeleccionado.classList.remove("border", "border-primary");
+    }
 
-            contactoSeleccionado = li;
-            contactoSeleccionado.classList.add("border", "border-primary");
-        });
+    contactoSeleccionado = li;
+    contactoSeleccionado.classList.add("border", "border-primary");
+});
 
-        // Enviar dinero (confirmación)
-        const btnEnviarDinero = document.getElementById("btnEnviarDinero");
+// Enviar dinero (confirmación)
+const btnEnviarDinero = document.getElementById("btnEnviarDinero");
 
-        btnEnviarDinero.addEventListener("click", () => {
-            if (!contactoSeleccionado) {
-                alert("Olvidaste seleccionar tu contacto");
-                return;
-            }
+btnEnviarDinero.addEventListener("click", () => {
+    if (!contactoSeleccionado) {
+        alert("Olvidaste seleccionar tu contacto");
+        return;
+    }
 
-            document.getElementById("montoEnviar").value = "";
-            document.getElementById("errorMonto").textContent = "";
-            modalMonto.show();
-        });
-
-
+    document.getElementById("montoEnviar").value = "";
+    document.getElementById("errorMonto").textContent = "";
+    modalMonto.show();
+});
 
 
 
-        const btnConfirmarEnvio = document.getElementById("btnConfirmarEnvio");
 
-        btnConfirmarEnvio.addEventListener("click", () => {
-            const inputMonto = document.getElementById("montoEnviar");
-            const errorMonto = document.getElementById("errorMonto");
 
-            const monto = parseInt(inputMonto.value);
+const btnConfirmarEnvio = document.getElementById("btnConfirmarEnvio");
 
-            // Validaciones
-            if (isNaN(monto) || monto <= 0) {
-                errorMonto.textContent = "Ingresa un monto válido.";
-                return;
-            }
+btnConfirmarEnvio.addEventListener("click", () => {
+    const inputMonto = document.getElementById("montoEnviar");
+    const errorMonto = document.getElementById("errorMonto");
 
-            if (monto > saldo) {
-                errorMonto.textContent = "Saldo insuficiente.";
-                return;
-            }
+    const monto = parseInt(inputMonto.value);
 
-            // Obtener nombre del contacto seleccionado
-            const nombre = contactoSeleccionado.querySelector(".contact-name")?.textContent || "contacto";
+    // Validaciones
+    if (isNaN(monto) || monto <= 0) {
+        errorMonto.textContent = "Ingresa un monto válido.";
+        return;
+    }
 
-            // Descontar saldo (porque es ENVIAR dinero)
-            saldo = saldo - monto;
+    if (monto > saldo) {
+        errorMonto.textContent = "Saldo insuficiente.";
+        return;
+    }
 
-            // Actualizar NAV con formato
-            if (saldoNav) saldoNav.textContent = formatoDinero(saldo);
+    // Obtener nombre del contacto seleccionado
+    const nombre = contactoSeleccionado.querySelector(".contact-name")?.textContent || "contacto";
 
-            // Cerrar modal
-            modalMonto.hide();
+    // Descontar saldo (porque es ENVIAR dinero)
+    saldo = saldo - monto;
 
-            // Confirmación
-            alert("Transferencia enviada a " + nombre + " por " + formatoDinero(monto));
-        });
+    // Actualizar NAV con formato
+    if (saldoNav) saldoNav.textContent = formatoDinero(saldo);
+
+    // Cerrar modal
+    modalMonto.hide();
+
+    // Confirmación
+    alert("Transferencia enviada a " + nombre + " por " + formatoDinero(monto));
+});
 
 
