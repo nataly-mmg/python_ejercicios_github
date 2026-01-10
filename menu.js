@@ -19,22 +19,19 @@ function redirigir(texto, pagina) {
 
 // EVENTOS
 if (btnDepositar) {
-    btnDepositar.addEventListener("click", (e) => {
-      e.preventDefault();
+    btnDepositar.addEventListener("click", () => {
       redirigir("Depósito", "Depositar.html");
     });
   }
 
   if (btnEnviar) {
-    btnEnviar.addEventListener("click", (e) => {
-      e.preventDefault();
+    btnEnviar.addEventListener("click", () => {
       redirigir("Enviar dinero", "EnviarDinero.html");
     });
   }
 
   if (btnMovimientos) {
-    btnMovimientos.addEventListener("click", (e) => {
-      e.preventDefault();
+    btnMovimientos.addEventListener("click", () => {
       redirigir("Últimos movimientos", "UltimosMovimientos.html");
     });
   }
