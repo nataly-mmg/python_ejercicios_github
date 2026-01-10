@@ -1,38 +1,50 @@
 
- const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
- const appendAlert = (message, type) => {
-   const wrapper = document.createElement('div')
-   wrapper.innerHTML = [
-     `<div class="mt-4 alert alert-${type} alert-dismissible fade show"  role="alert">`,
-     `   <div>${message}</div>`,
-     '   <button id="cerrar-alert" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
-    '</div>'
-  ].join('')
 
-   alertPlaceholder.append(wrapper)
- }
+$(document).ready(function () {
 
+// Alertas bootstrap
 
-
-
-// Para Login
-
-const alertTrigger = document.getElementById('liveAlertBtn')
-
-
-alertTrigger.addEventListener('click', (e) => {
-  e.preventDefault()
-
-  const email = document.getElementById("email").value
-  const password = document.getElementById("inputPassword").value
-
-  if (email === "admin@correo.cl" && password === "1234") {
-    alert("Inicio de sesión exitoso")
-    window.location.href = "menu.html"
-  } else {
-    alert("Correo o contraseña incorrectos")
-  }
-})
+   function mostrarAlerta(mensaje, tipo) {
+        const alertaHTML = `
+            <div class="alert alert-${tipo} alert-dismissible fade show mt-3" role="alert">
+                ${mensaje}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        $('#liveAlertPlaceholder').html(alertaHTML);
+    }
 
 
 
+
+// Formulario
+
+ $('#loginForm').submit(function (e) {
+        e.preventDefault(); 
+
+        // Obtener valores 
+        const email = $('#email').val();
+        const password = $('#password').val();
+
+        // Limpiar alertas anteriores
+        $('#liveAlertPlaceholder').html('');
+
+        // Validación 
+        if (email === '' || password === '') {
+            mostrarAlerta('Debe completar todos los campos', 'danger');
+            return;
+        }
+
+        // login
+        if (email === 'admin@correo.cl' && password === '1234') {
+            mostrarAlerta('Inicio de sesión exitoso', 'success');
+
+            setTimeout(function () {
+                window.location.href = 'menu.html';
+            }, 1200);
+        } else {
+            mostrarAlerta('Correo o contraseña incorrectos', 'danger');
+        }
+    });
+
+});
