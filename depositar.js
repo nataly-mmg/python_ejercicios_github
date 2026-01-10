@@ -1,5 +1,19 @@
   
-  
+  // mostrar el saldoactual (Local Storage + jquery)
+
+$(function () {
+  let saldo = parseInt(localStorage.getItem("saldo")) || 60000;
+  localStorage.setItem("saldo", saldo);
+  $('#saldoNav').text('$' + saldo);
+
+
+
+});
+
+
+
+
+
   const btnDeposito = document.getElementById("btnDeposito");
   const inputMonto = document.getElementById("depositAmount");
   const saldoNav = document.getElementById("saldoNav");
@@ -16,8 +30,8 @@
       return;
     }
 
-    saldo = saldo + monto;
-    saldoNav.textContent = "$" + saldo;
+    // saldo = saldo + monto;
+    // saldoNav.textContent = "$" + saldo;
 
     inputMonto.value = "";
   });
