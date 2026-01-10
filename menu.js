@@ -28,14 +28,14 @@ if (btnDepositar) {
   if (btnEnviar) {
     btnEnviar.addEventListener("click", (e) => {
       e.preventDefault();
-      redirigir("Enviar dinero", "Enviar dinero.html");
+      redirigir("Enviar dinero", "EnviarDinero.html");
     });
   }
 
   if (btnMovimientos) {
     btnMovimientos.addEventListener("click", (e) => {
       e.preventDefault();
-      redirigir("Últimos movimientos", "Últimos movimientos.html");
+      redirigir("Últimos movimientos", "UltimosMovimientos.html");
     });
   }
   
