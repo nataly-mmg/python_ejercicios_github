@@ -18,30 +18,38 @@ $(function () {
     `);
   }
 
+// redirección al menú principal
+
+$('form').submit(function (e) {
+    e.preventDefault();
+
+    const monto = parseInt($('#depositAmount').val());
+
+    if (isNaN(monto) || monto <= 0) {
+      mostrarAlerta('Ingrese un monto válido', 'danger');
+      return;
+    }
+
+    // Actualizar saldo
+    saldo += monto;
+    localStorage.setItem("saldo", saldo);
+    $('#saldoNav').text('$' + saldo);
+
+    // Mostrar leyenda debajo del formulario
+    $('#mensajeDeposito').text('Monto depositado: $' + monto);
+
+    // Mostrar alerta Bootstrap de éxito
+    mostrarAlerta('Depósito realizado con éxito', 'success');
+
+    // Limpiar campo
+    $('#depositAmount').val('');
+
+    // Redirección con retraso de 2 segundos
+    setTimeout(() => {
+      window.location.href = 'menu.html';
+    }, 2000);
+  });
+
+
 });
 
-
-
-
-
-  const btnDeposito = document.getElementById("btnDeposito");
-  const inputMonto = document.getElementById("depositAmount");
-  const saldoNav = document.getElementById("saldoNav");
-
-  let saldo = 60000; 
-
-  // btnDeposito.addEventListener("click", (e) => {
-  //   e.preventDefault();
-
-  //   const monto = parseInt(inputMonto.value);
-
-  //   if (isNaN(monto) || monto <= 0) {
-  //     alert("Ingresa un monto válido");
-  //     return;
-  //   }
-
-    // saldo = saldo + monto;
-    // saldoNav.textContent = "$" + saldo;
-
-    // inputMonto.value = "";
-  });
