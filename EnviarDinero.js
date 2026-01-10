@@ -2,27 +2,86 @@
 
 $(function () {
 
-// Saldo en Local Storage
+    // Saldo en Local Storage
 
-let saldo = parseInt(localStorage.getItem("saldo")) || 60000;
-  localStorage.setItem("saldo", saldo);
+    let saldo = parseInt(localStorage.getItem("saldo")) || 60000;
+    localStorage.setItem("saldo", saldo);
 
-  const formatoDinero = (valor) => "$" + Number(valor).toLocaleString("es-CL");
-  $("#saldoNav").text(formatoDinero(saldo));
+    const formatoDinero = (valor) => "$" + Number(valor).toLocaleString("es-CL");
+    $("#saldoNav").text(formatoDinero(saldo));
 
 
-//  Abrir modal para contacto + bootstrap lo oculta
-  const modalContacto = new bootstrap.Modal(document.getElementById("modalContacto"));
-  const modalMonto = new bootstrap.Modal(document.getElementById("modalMonto"));
+    //  Abrir modal para contacto + bootstrap lo oculta
+    const modalContacto = new bootstrap.Modal(document.getElementById("modalContacto"));
+    const modalMonto = new bootstrap.Modal(document.getElementById("modalMonto"));
 
-  $("#btnNuevoContacto").on("click", function () {
-    $("#alert-container").html("");
-    $("#confirmacionEnvio").text("");
-    modalContacto.show();
+    $("#btnNuevoContacto").on("click", function () {
+        $("#alert-container").html("");
+        $("#confirmacionEnvio").text("");
+        modalContacto.show();
 
-  });
+    });
 
-  });
+
+    // Campos obligatorios
+
+    function mostrarAlerta(mensaje, tipo) {
+        $("#alert-container").html(`
+      <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+        ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    `);
+    }
+
+    //   formato CBU
+
+    function validarCBU(cbu) {
+        return /^[0-9]{6,}$/.test(cbu);
+    }
+
+
+    // Agrega contacto
+
+    $("#btnGuardarContacto").on("click", function () {
+        const nombre = $("#contactoNombre").val().trim();
+        const cbu = $("#contactoCBU").val().trim();
+        const alias = $("#contactoAlias").val().trim();
+        const banco = $("#contactoBanco").val().trim();
+
+        if (!nombre || !cbu || !alias || !banco) {
+            mostrarAlerta("Debes completar todos los datos del contacto.", "danger");
+            return;
+        }
+
+        if (!validarCBU(cbu)) {
+            mostrarAlerta("El CBU debe contener solo números y tener al menos 6 dígitos.", "danger");
+            return;
+        }
+
+        $("#ListaContactos").append(`
+      <li class="list-group-item">
+        <div class="contact-info">
+          <span class="contact-name">${nombre}</span>
+          <span class="contact-details">CBU: ${cbu}, Alias: ${alias}, Banco: ${banco}</span>
+        </div>
+      </li>
+    `);
+
+    });
+
+    // Limpiar campos
+
+    $("#contactoNombre, #contactoCBU, #contactoAlias, #contactoBanco").val("");
+
+    mostrarAlerta("Contacto agregado correctamente.", "success");
+    modalContacto.hide();
+});
+
+
+
+
+
 
 
 
