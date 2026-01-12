@@ -32,14 +32,14 @@ $(function () {
 
     // MOSTRAR / OCULTAR AGENDA
 
-$("#btnMostrarAgenda").on("click", function () {
-  $("#agendaContainer").toggleClass("d-none");
+    $("#btnMostrarAgenda").on("click", function () {
+        $("#agendaContainer").toggleClass("d-none");
 
-  const abierta = !$("#agendaContainer").hasClass("d-none");
+        const abierta = !$("#agendaContainer").hasClass("d-none");
 
-  $(this)
-    .toggleClass("btn-primary btn-secondary")
-    .text(abierta ? "Ocultar agenda" : "Buscar en la agenda de contactos");
+        $(this)
+            .toggleClass("btn-primary btn-secondary")
+            .text(abierta ? "Ocultar agenda" : "Buscar en la agenda de contactos");
 
         // Reset visual
         $("#buscarcontacto").val("");
@@ -72,6 +72,14 @@ $("#btnMostrarAgenda").on("click", function () {
     `);
     }
 
+    function mostrarAlertaContacto(mensaje, tipo) {
+    $("#alert-contacto").html(`
+      <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+        ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    `);
+}
 
     // VALIDACIÓN CBU
 
@@ -89,12 +97,12 @@ $("#btnMostrarAgenda").on("click", function () {
         const banco = $("#contactoBanco").val().trim();
 
         if (!nombre || !cbu || !alias || !banco) {
-            mostrarAlerta("Debes completar todos los datos del contacto.", "danger");
+            mostrarAlertaContacto("Debes completar todos los datos del contacto.", "danger");
             return;
         }
 
         if (!validarCBU(cbu)) {
-            mostrarAlerta("El CBU debe tener al menos 6 números.", "danger");
+            mostrarAlertaContacto("El CBU debe tener al menos 6 números.", "danger");
             return;
         }
 
@@ -115,42 +123,47 @@ $("#btnMostrarAgenda").on("click", function () {
 
         mostrarAlerta("Contacto agregado correctamente.", "success");
         modalContacto.hide();
+
+
+
+
+        
     });
 
 
     // BUSCAR EN AGENDA (NOMBRE O ALIAS)
 
-$("#buscarcontacto").on("input", function () {
+    $("#buscarcontacto").on("input", function () {
 
-  const termino = $(this).val().toLowerCase().trim();
+        const termino = $(this).val().toLowerCase().trim();
 
-  let hayCoincidencias = false;
+        let hayCoincidencias = false;
 
-  $("#ListaContactos li").each(function () {
-    const nombre = $(this).find(".contact-name").text().toLowerCase();
-    const alias = ($(this).data("alias") || "").toLowerCase();
+        $("#ListaContactos li").each(function () {
+            const nombre = $(this).find(".contact-name").text().toLowerCase();
+            const alias = ($(this).data("alias") || "").toLowerCase();
 
-    const coincide = nombre.includes(termino) || alias.includes(termino);
+            const coincide = nombre.includes(termino) || alias.includes(termino);
 
-    $(this).toggle(coincide);
+            $(this).toggle(coincide);
 
-    if (coincide) hayCoincidencias = true;
-  });
+            if (coincide) hayCoincidencias = true;
+        });
 
-  // Si el campo está vacío, no mostrar mensaje
-  if (termino === "") {
-    $("#msgNoExiste").addClass("d-none");
-    return;
-  }
+        // Si el campo está vacío, no mostrar mensaje
+        if (termino === "") {
+            $("#msgNoExiste").addClass("d-none");
+            return;
+        }
 
-  // Mostrar / ocultar mensaje según coincidencias
-  if (!hayCoincidencias) {
-    $("#msgNoExiste").removeClass("d-none");
-    $("#btnEnviarDinero").addClass("d-none"); // opcional: esconder enviar si no hay resultados
-  } else {
-    $("#msgNoExiste").addClass("d-none");
-  }
-});
+        // Mostrar / ocultar mensaje según coincidencias
+        if (!hayCoincidencias) {
+            $("#msgNoExiste").removeClass("d-none");
+            $("#btnEnviarDinero").addClass("d-none"); // opcional: esconder enviar si no hay resultados
+        } else {
+            $("#msgNoExiste").addClass("d-none");
+        }
+    });
 
 
     // SELECCIONAR CONTACTO
