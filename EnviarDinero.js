@@ -120,20 +120,37 @@ $("#btnMostrarAgenda").on("click", function () {
 
     // BUSCAR EN AGENDA (NOMBRE O ALIAS)
 
-    $("#buscarcontacto").on("input", function () {
+$("#buscarcontacto").on("input", function () {
 
-        const termino = $(this).val().toLowerCase().trim();
+  const termino = $(this).val().toLowerCase().trim();
 
-        $("#ListaContactos li").each(function () {
-            const nombre = $(this).find(".contact-name").text().toLowerCase();
-            const alias = ($(this).data("alias") || "").toLowerCase();
+  let hayCoincidencias = false;
 
-            const coincide =
-                nombre.includes(termino) || alias.includes(termino);
+  $("#ListaContactos li").each(function () {
+    const nombre = $(this).find(".contact-name").text().toLowerCase();
+    const alias = ($(this).data("alias") || "").toLowerCase();
 
-            $(this).toggle(coincide);
-        });
-    });
+    const coincide = nombre.includes(termino) || alias.includes(termino);
+
+    $(this).toggle(coincide);
+
+    if (coincide) hayCoincidencias = true;
+  });
+
+  // Si el campo está vacío, no mostrar mensaje
+  if (termino === "") {
+    $("#msgNoExiste").addClass("d-none");
+    return;
+  }
+
+  // Mostrar / ocultar mensaje según coincidencias
+  if (!hayCoincidencias) {
+    $("#msgNoExiste").removeClass("d-none");
+    $("#btnEnviarDinero").addClass("d-none"); // opcional: esconder enviar si no hay resultados
+  } else {
+    $("#msgNoExiste").addClass("d-none");
+  }
+});
 
 
     // SELECCIONAR CONTACTO
