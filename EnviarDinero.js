@@ -32,15 +32,14 @@ $(function () {
 
     // MOSTRAR / OCULTAR AGENDA
 
-    $("#btnMostrarAgenda").on("click", function () {
-        $("#agendaContainer").toggleClass("d-none");
+$("#btnMostrarAgenda").on("click", function () {
+  $("#agendaContainer").toggleClass("d-none");
 
-        const estaOculta = $("#agendaContainer").hasClass("d-none");
-        $(this).text(
-            estaOculta
-                ? "Buscar en la agenda de contactos"
-                : "Ocultar agenda"
-        );
+  const abierta = !$("#agendaContainer").hasClass("d-none");
+
+  $(this)
+    .toggleClass("btn-primary btn-secondary")
+    .text(abierta ? "Ocultar agenda" : "Buscar en la agenda de contactos");
 
         // Reset visual
         $("#buscarcontacto").val("");
