@@ -171,6 +171,34 @@
     </div>
 
 
+<!-- MODAL DE COMPRA -->
+<div class="modal fade" id="modalCompra" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar compra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+                <label class="form-label">Descripción</label>
+                <input type="text" class="form-control" id="detalleCompra" placeholder="Ej: Supermercado">
+
+                <label class="form-label mt-3">Ingrese monto</label>
+                <input type="number" class="form-control" id="montoCompra" min="1" placeholder="Ej: 12000">
+
+                <div id="errorCompra" class="text-danger mt-2"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnConfirmarCompra">Aceptar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
 

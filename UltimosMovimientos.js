@@ -39,27 +39,12 @@ movimientos = [
     }
 ];
 
+let usandoFicticios = true;
+
 const saldoNav = document.getElementById("saldoNav");
 const listaMov = document.getElementById("listaMovimientos");
 
 
-
-// +++++
-
-
-// function agregarMovimiento(texto) {
-//     const sinMov = document.getElementById("sinMovimientos");
-//     if (sinMov) sinMov.remove();
-
-//     const li = document.createElement("li");
-//     li.className = "list-group-item";
-//     li.textContent = texto;
-
-//     // Insertar al inicio 
-//     listaMov.insertBefore(li, listaMov.firstChild);
-// }
-
-// +++++
 
 
 function renderSaldo() {
@@ -72,9 +57,9 @@ renderSaldo();
   // NUEVO: traducir tipo a texto
   function getTipoTransaccion(tipo) {
     switch (tipo) {
+      case "compra": return "Compra";
       case "deposito": return "Depósito";
       case "transferencia_recibida": return "Transferencia recibida";
-      case "compra": return "Compra";
       default: return "Movimiento";
     }
   }
@@ -111,15 +96,25 @@ renderSaldo();
     });
   }
 
-  // NUEVO: guardar movimiento con tipo
-  function agregarMovimiento(tipo, texto) {
-    // insertar al inicio (últimos primero)
-    movimientos.unshift({ tipo, texto });
 
-    // render según filtro actual seleccionado
-    const filtroActual = $("#filtroMovimientos").val() || "todos";
-    mostrarUltimosMovimientos(filtroActual);
+ // NUEVO: guardar movimiento con tipo
+function agregarMovimiento(tipo, texto) {
+
+  // BORRAR LISTA FICTICIA AL PRIMER MOVIMIENTO REAL
+  if (usandoFicticios) {
+    movimientos = [];          // borra los ficticios del arreglo
+    usandoFicticios = false;   // desde ahora son movimientos reales
   }
+
+  // insertar al inicio (últimos primero)
+  movimientos.unshift({ tipo, texto });
+
+  // render según filtro actual seleccionado
+  const filtroActual = $("#filtroMovimientos").val() || "todos";
+  mostrarUltimosMovimientos(filtroActual);
+  }
+
+
 
   // Render inicial (sin movimientos)
   mostrarUltimosMovimientos("todos");
@@ -128,50 +123,68 @@ renderSaldo();
 
 
 // MODAL
-const modalDeposito = new bootstrap.Modal(document.getElementById("modalDeposito"));
-const modalTransferencia = new bootstrap.Modal(document.getElementById("modalTransferencia"));
+const modalDeposito = new bootstrap.Modal($("#modalDeposito")[0]);
+const modalTransferencia = new bootstrap.Modal($("#modalTransferencia")[0]);
+const modalCompra = new bootstrap.Modal($("#modalCompra")[0]);
+
 
 // ABRIR MODAL DEPÓSITO
-document.getElementById("btnAbrirDeposito").addEventListener("click", () => {
+
+$("#btnAbrirDeposito").on("click", function () {
     ocultarMensajes();
-    document.getElementById("montoDeposito").value = "";
-    document.getElementById("errorDeposito").textContent = "";
+    $("#montoDeposito").val("");
+    $("#errorDeposito").text("");
     modalDeposito.show();
 });
 
+
+
+
 // ABRIR MODAL TRANSFERENCIA
-document.getElementById("btnAbrirTransferencia").addEventListener("click", () => {
+$("#btnAbrirTransferencia").on("click", function () {
     ocultarMensajes();
-    document.getElementById("destinoTransferencia").value = "";
-    document.getElementById("montoTransferencia").value = "";
-    document.getElementById("errorTransferencia").textContent = "";
+    $("#destinoTransferencia").val("");
+    $("#montoTransferencia").val("");
+    $("#errorTransferencia").text("");
     modalTransferencia.show();
 });
 
-// CONFIRMAR DEPÓSITO
-document.getElementById("btnConfirmarDeposito").addEventListener("click", () => {
-    const input = document.getElementById("montoDeposito");
-    const err = document.getElementById("errorDeposito");
-    err.textContent = "";
 
-    const monto = parseInt(input.value);
+
+// ABRIR MODAL COMPRA
+$("#btnAbrirCompra").on("click", function () {
+    ocultarMensajes();
+    $("#detalleCompra").val("");
+    $("#montoCompra").val("");
+    $("#errorCompra").text("");
+    modalCompra.show();
+});
+
+// CONFIRMAR DEPÓSITO
+$("#btnConfirmarDeposito").on("click", function () {
+
+    const monto = parseInt($("#montoDeposito").val());
+    $("#errorDeposito").text("");
 
     if (isNaN(monto) || monto <= 0) {
-        err.textContent = "Ingresa un monto válido.";
+        $("#errorDeposito").text("Ingresa un monto válido.");
         return;
     }
 
     saldo += monto;
     renderSaldo();
-    agregarMovimiento("Depósito - " + formatoDinero(monto));
+    agregarMovimiento("deposito", "Depósito - " + formatoDinero(monto));
 
     modalDeposito.hide();
     mostrarOk("Depósito realizado");
 
     setTimeout(() => {
         ocultarMensajes();
-    }, 1000); // 1 segundo
+    }, 1000);
 });
+
+
+
 
 // Confirmar modalTransferencia
 
@@ -193,11 +206,10 @@ document.getElementById("btnConfirmarDeposito").addEventListener("click", () => 
       return;
     }
 
-
-
     saldo -= monto;
     renderSaldo();
-    agregarMovimiento("Transferencia a " + destino + " - " + formatoDinero(monto));
+    agregarMovimiento("transferencia_recibida", "Transferencia recibida de " + destino + " - " + formatoDinero(monto));
+
 
     modalTransferencia.hide();
     mostrarOk("Transferencia enviada ");
@@ -205,6 +217,46 @@ document.getElementById("btnConfirmarDeposito").addEventListener("click", () => 
         ocultarMensajes();
     }, 1000); // 1 segundo
 });
+
+
+// CONFIRMAR COMPRA (jQuery)
+$("#btnConfirmarCompra").on("click", function () {
+
+    const detalle = $("#detalleCompra").val().trim();
+    const monto = parseInt($("#montoCompra").val());
+    $("#errorCompra").text("");
+
+    if (!detalle) {
+        $("#errorCompra").text("Ingresa una descripción.");
+        return;
+    }
+
+    if (isNaN(monto) || monto <= 0) {
+        $("#errorCompra").text("Ingresa un monto válido.");
+        return;
+    }
+
+    if (monto > saldo) {
+        $("#errorCompra").text("Saldo insuficiente.");
+        return;
+    }
+
+    // descontar saldo
+    saldo -= monto;
+    renderSaldo();
+
+    // agregar movimiento (IMPORTANTE: 2 parámetros tipo y texto)
+    agregarMovimiento("compra", "Compra - " + detalle + " - " + formatoDinero(monto));
+
+    modalCompra.hide();
+    mostrarOk("Compra registrada");
+
+    setTimeout(() => {
+        ocultarMensajes();
+    }, 1000);
+});
+
+
 
 
 // Filtro de movimientos
