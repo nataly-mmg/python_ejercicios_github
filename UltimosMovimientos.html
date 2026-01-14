@@ -46,26 +46,54 @@
         </div>
 
 
-        <!-- LISTA MOVIMIENTOS -->
-        <div class="p-4 bg-body-tertiary mx-auto login-box" style="max-width: 600px; width: 100%; border-radius: 24px;">
-            <ul class="list-group" id="listaMovimientos">
+        <!-- FILTRO POR TIPO DE MOVIMIENTO -->
+        <div class="p-5 bg-body-tertiary mx-auto login-box mb-3"
+            style="max-width: 600px; width: 100%; border-radius: 24px;">
+            <label for="filtroMovimientos" class="form-label mb-2">Filtrar por tipo de movimiento:</label>
+            <select id="filtroMovimientos" class="form-select mb-4">
+                <option value="todos" selected>Todos</option>
+                <option value="deposito">Depósito</option>
+                <option value="transferencia_recibida">Transferencia recibida</option>
+                <option value="compra">Compra</option>
+            </select>
 
-                <li class="list-group-item text-center text-secondary " id="sinMovimientos">
-                    Aún no tienes movimientos aquí
-                </li>
-            </ul>
+
+
+            <div class="row mx-auto">
+                <div class="col">
+                    <h4 class="text-center p-1 ">Lista de Transacciones</h4>
+                </div>
+            </div>
+
+
+            <!-- LISTA MOVIMIENTOS -->
+            <div class="p-4 bg-body-tertiary mx-auto login-box"
+                style="max-width: 600px; width: 100%; border-radius: 24px;">
+                <ul class="list-group" id="listaMovimientos">
+                </ul>
+            </div>
+
+
+
         </div>
 
+
+
         <!-- BOTONES (DEPOSITAR / TRANSFERIR) -->
-        <div class="row g-2 mt-3">
-            <div class="col-12 col-sm-6 d-grid">
+        <div class="row g-2 mt-3 justify-content-center">
+            <div class="col-12 col-sm-3 d-grid">
                 <button type="button" class="btn btn-primary" id="btnAbrirDeposito">
-                    Depositar
+                    Depósito
                 </button>
             </div>
-            <div class="col-12 col-sm-6 d-grid">
+            <div class="col-12 col-sm-3 d-grid">
                 <button type="button" class="btn btn-primary" id="btnAbrirTransferencia">
-                    Transferir
+                    Transferencia recibida
+                </button>
+            </div>
+            <div class="col-12 col-sm-3 d-grid">
+                <button type="button" class="btn btn-primary" id="btnAbrirCompra">
+                    Compra
                 </button>
             </div>
         </div>
@@ -147,8 +175,9 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="UltimosMovimientos.js"></script>
+
 
 
 </body>

@@ -24,26 +24,108 @@ function ocultarMensajes() {
 let saldo = 60000;
 let movimientos = [];
 
+movimientos = [
+    {
+        tipo: "deposito",
+        texto: "Depósito - $50.000"
+    },
+    {
+        tipo: "transferencia_recibida",
+        texto: "Transferencia recibida de Erica - $15.000"
+    },
+    {
+        tipo: "compra",
+        texto: "Compra en supermercado - $12.000"
+    }
+];
+
 const saldoNav = document.getElementById("saldoNav");
 const listaMov = document.getElementById("listaMovimientos");
 
-function agregarMovimiento(texto) {
-    const sinMov = document.getElementById("sinMovimientos");
-    if (sinMov) sinMov.remove();
 
-    const li = document.createElement("li");
-    li.className = "list-group-item";
-    li.textContent = texto;
 
-    // Insertar al inicio 
-    listaMov.insertBefore(li, listaMov.firstChild);
-}
+// +++++
+
+
+// function agregarMovimiento(texto) {
+//     const sinMov = document.getElementById("sinMovimientos");
+//     if (sinMov) sinMov.remove();
+
+//     const li = document.createElement("li");
+//     li.className = "list-group-item";
+//     li.textContent = texto;
+
+//     // Insertar al inicio 
+//     listaMov.insertBefore(li, listaMov.firstChild);
+// }
+
+// +++++
+
 
 function renderSaldo() {
     saldoNav.textContent = formatoDinero(saldo);
 }
 
 renderSaldo();
+
+
+  // NUEVO: traducir tipo a texto
+  function getTipoTransaccion(tipo) {
+    switch (tipo) {
+      case "deposito": return "Depósito";
+      case "transferencia_recibida": return "Transferencia recibida";
+      case "compra": return "Compra";
+      default: return "Movimiento";
+    }
+  }
+
+  // NUEVO: mostrar últimos movimientos según filtro
+  function mostrarUltimosMovimientos(filtro) {
+    // limpiar lista
+    $("#listaMovimientos").empty();
+
+    // filtrar
+    let filtrados = movimientos;
+
+    if (filtro && filtro !== "todos") {
+      filtrados = movimientos.filter(m => m.tipo === filtro);
+    }
+
+    // si no hay movimientos para mostrar
+    if (filtrados.length === 0) {
+      $("#listaMovimientos").append(`
+        <li class="list-group-item text-center text-secondary" id="sinMovimientos">
+          Aún no tienes movimientos aquí
+        </li>
+      `);
+      return;
+    }
+
+    // mostrar (ya están guardados en orden: últimos primero)
+    filtrados.forEach(m => {
+      $("#listaMovimientos").append(`
+        <li class="list-group-item">
+          <strong>${getTipoTransaccion(m.tipo)}:</strong> ${m.texto}
+        </li>
+      `);
+    });
+  }
+
+  // NUEVO: guardar movimiento con tipo
+  function agregarMovimiento(tipo, texto) {
+    // insertar al inicio (últimos primero)
+    movimientos.unshift({ tipo, texto });
+
+    // render según filtro actual seleccionado
+    const filtroActual = $("#filtroMovimientos").val() || "todos";
+    mostrarUltimosMovimientos(filtroActual);
+  }
+
+  // Render inicial (sin movimientos)
+  mostrarUltimosMovimientos("todos");
+
+
+
 
 // MODAL
 const modalDeposito = new bootstrap.Modal(document.getElementById("modalDeposito"));
@@ -91,27 +173,27 @@ document.getElementById("btnConfirmarDeposito").addEventListener("click", () => 
     }, 1000); // 1 segundo
 });
 
-// CONFIRMAR TRANSFERENCIA
-document.getElementById("btnConfirmarTransferencia").addEventListener("click", () => {
-    const destino = document.getElementById("destinoTransferencia").value.trim();
-    const inputMonto = document.getElementById("montoTransferencia");
-    const err = document.getElementById("errorTransferencia");
-    err.textContent = "";
+// Confirmar modalTransferencia
 
-    const monto = parseInt(inputMonto.value);
+  $("#btnConfirmarTransferencia").on("click", function () {
+    const destino = $("#destinoTransferencia").val().trim();
+    const monto = parseInt($("#montoTransferencia").val());
+    $("#errorTransferencia").text("");
 
     if (!destino) {
-        err.textContent = "Ingresa el nombre del destinatario.";
-        return;
+      $("#errorTransferencia").text("Ingresa el nombre del destinatario.");
+      return;
     }
     if (isNaN(monto) || monto <= 0) {
-        err.textContent = "Ingresa un monto válido.";
-        return;
+      $("#errorTransferencia").text("Ingresa un monto válido.");
+      return;
     }
     if (monto > saldo) {
-        err.textContent = "Saldo insuficiente.";
-        return;
+      $("#errorTransferencia").text("Saldo insuficiente.");
+      return;
     }
+
+
 
     saldo -= monto;
     renderSaldo();
@@ -123,5 +205,13 @@ document.getElementById("btnConfirmarTransferencia").addEventListener("click", (
         ocultarMensajes();
     }, 1000); // 1 segundo
 });
+
+
+// Filtro de movimientos
+
+  $("#filtroMovimientos").on("change", function () {
+    const filtro = $(this).val();
+    mostrarUltimosMovimientos(filtro);
+  });
 
 
