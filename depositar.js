@@ -1,5 +1,5 @@
-  
-  // mostrar el saldo actual (Local Storage + jquery)
+
+// mostrar el saldo actual (Local Storage + jquery)
 
 $(function () {
   let saldo = parseInt(localStorage.getItem("saldo")) || 60000;
@@ -7,8 +7,8 @@ $(function () {
   $('#saldoNav').text('$' + saldo);
 
 
-// alerta Bootstrap para confirmar que el depósito fue realizado con éxito.
-  
+  // alerta Bootstrap para confirmar que el depósito fue realizado con éxito.
+
   function mostrarAlerta(mensaje, tipo) {
     $('#alert-container').html(`
       <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
@@ -18,9 +18,9 @@ $(function () {
     `);
   }
 
-// redirección al menú principal
+  // redirección al menú principal
 
-$('form').submit(function (e) {
+  $('form').submit(function (e) {
     e.preventDefault();
 
     const monto = parseInt($('#depositAmount').val());
@@ -49,6 +49,9 @@ $('form').submit(function (e) {
       window.location.href = 'menu.html';
     }, 2000);
   });
+
+  // Reiniciar saldo al abrir la pantalla Depositar
+  localStorage.setItem("saldo", 60000);
 
 
 });
